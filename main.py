@@ -693,10 +693,16 @@ def login():
     
     return render_template_string(LOGIN_TEMPLATE, error=error)
 
-@app.route('/logout', methods=['POST'])
+
+@app.route('/logout', methods=['POST', 'GET'])
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    response = redirect(url_for('login'))
+    # Prevent caching to ensure logout works properly
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/')
 @login_required
